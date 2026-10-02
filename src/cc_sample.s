@@ -15,9 +15,9 @@
 #   Classic Controller            Wii Remote / Nunchuk
 #   A  B                          A  B
 #   X                             C   (dismiss / lie down)
-#   Y  -                          -   (switch leaders)
-#   ZL                            Z   (camera)
-#   L  R                          1  2   (the two sprays)
+#   Y  -                          -   (radar map)
+#   ZL                            Z   (camera look)
+#   L  R                          ←  →  (camera zoom / strafe)
 #   ZR                            D-pad down (swarm)
 #   D-pad                         D-pad
 #   +  HOME                       +  HOME
