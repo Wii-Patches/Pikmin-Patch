@@ -42,8 +42,19 @@ class App(BASE):
         self.busy = False
 
         try:
-            img = tk.PhotoImage(file=asset('logo.png'))
-            self.logo = img.subsample(max(1, img.width() // 300))
+            try:
+                from PIL import Image as _PImage, ImageTk as _PITk
+                _src = _PImage.open(asset('logo.png')).convert('RGBA')
+                _target_w = 560
+                _scale = _target_w / _src.width
+                _target_h = max(1, round(_src.height * _scale))
+                _src = _src.resize((_target_w, _target_h), _PImage.LANCZOS)
+                self.logo = _PITk.PhotoImage(_src)
+            except ImportError:
+                # PIL not available — fall back to integer subsample (same factor both axes)
+                _raw = tk.PhotoImage(file=asset('logo.png'))
+                _factor = max(1, _raw.width() // 560)
+                self.logo = _raw.subsample(_factor, _factor)
             tk.Label(self, image=self.logo).pack(pady=(10, 0))
         except Exception:                              # the window is fine without its logo
             pass
