@@ -30,6 +30,7 @@ def asset(name):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', name)
 
 
+WIN_W = 620
 BASE = TkinterDnD.Tk if HAVE_DND else tk.Tk
 
 
@@ -37,7 +38,9 @@ class App(BASE):
     def __init__(self):
         super().__init__()
         self.title('Pikmin Patcher')
-        self.geometry('620x600')
+        self.geometry('%dx620' % WIN_W)
+        self.minsize(WIN_W, 620)
+        self.resizable(False, True)
         self.msgq = queue.Queue()
         self.busy = False
 
@@ -45,7 +48,10 @@ class App(BASE):
             try:
                 from PIL import Image as _PImage, ImageTk as _PITk
                 _src = _PImage.open(asset('logo.png')).convert('RGBA')
-                _target_w = 560
+                _box = _src.getchannel('A').getbbox()          # trim transparent margins so it sits flush
+                if _box:
+                    _src = _src.crop(_box)
+                _target_w = WIN_W
                 _scale = _target_w / _src.width
                 _target_h = max(1, round(_src.height * _scale))
                 _src = _src.resize((_target_w, _target_h), _PImage.LANCZOS)
@@ -53,9 +59,9 @@ class App(BASE):
             except ImportError:
                 # PIL not available — fall back to integer subsample (same factor both axes)
                 _raw = tk.PhotoImage(file=asset('logo.png'))
-                _factor = max(1, _raw.width() // 560)
+                _factor = max(1, _raw.width() // WIN_W)
                 self.logo = _raw.subsample(_factor, _factor)
-            tk.Label(self, image=self.logo).pack(pady=(10, 0))
+            tk.Label(self, image=self.logo, bd=0, highlightthickness=0, padx=0, pady=0).pack(fill='x')
         except Exception:                              # the window is fine without its logo
             pass
         tk.Label(self, text='New Play Control! Pikmin  -  USA / Europe / Japan',
