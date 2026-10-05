@@ -173,6 +173,20 @@
    ],
    "tramp": 2147490304,
    "note": "KPAD read loop: pointer from the right stick"
+  },
+  {
+   "t": "hook",
+   "site": 2147923612,
+   "orig": 2417885184,
+   "payload": [
+    671088642,
+    1082261512,
+    939524097,
+    2417885184,
+    0
+   ],
+   "tramp": 2147490448,
+   "note": "WPADProbe: a Classic Controller reads as a Nunchuk (no \"attach Nunchuk\" prompt)"
   }
  ]
 }

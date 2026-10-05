@@ -26,6 +26,7 @@ POINTER_BL = 0x800AFBB8          # bl <per-sample IR/geometry>
 POINTER_B = 0x800AFBBC           # b  <end of the sample's iteration>
 
 PROBE_ENTRY = 0x8006B664         # WPADProbe, first instruction (stwu r1,-0x10(r1))
+PROBE_TYPE_STORE = 0x8006B69C    # stw r0,0(r30)    WPADProbe stores the extension type
 RING_COUNT = 0x800AF604          # lbz r0,0x10f(r31)  KPAD read: samples waiting in the ring
 
 USA_DOL = None
@@ -84,6 +85,16 @@ def pointer_source(marker, prologue='', epilogue=''):
 def hook(site, orig, base, source, syms, consts, note):
     words = asm.words(asm.assemble(read('macros.s') + source, base, syms, consts)) + [0]
     return Hook(site, orig, words, base, note=note), (len(words) * 4 + 15) & ~15
+
+
+def type_store_site(region, dol):
+    """WPADProbe's store of the extension type (the Classic Controller patch turns type 2 into 1 there)."""
+    usa = USA_DOL if region != 'R9IE01' else dol
+    addr = PROBE_TYPE_STORE if region == 'R9IE01' else find_unique(usa, dol, PROBE_TYPE_STORE, 12, 6)
+    word = struct.unpack('>I', dol.read(addr, 4))[0]
+    if word != 0x901E0000:
+        raise SystemExit('%s: probe type-store site is 0x%08X' % (region, word))
+    return addr, word
 
 
 def gc_extra_sites(region, dol):

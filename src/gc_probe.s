@@ -2,8 +2,9 @@
 # extension type).  WPADProbe is how the game asks "is a controller connected?"
 # in many places.  The routine runs the real WPADProbe (the displaced `stwu` opens
 # its frame, then the call continues at its second instruction and returns here);
-# if it says "no controller" (-1) and a GameCube pad answers on the matching port,
-# say "connected, Nunchuk" instead.
+# if it says "no controller" (-1), or a remote with no Nunchuk or a Classic
+# Controller (the game prompts for a Nunchuk then), and a GameCube pad answers on
+# the matching port, say "connected, Nunchuk" instead.
     stwu    1, -0x20(1)
     mflr    0
     stw     0, 0x24(1)
@@ -15,7 +16,10 @@
     mtctr   12
     bctrl                               # the rest of WPADProbe
     cmpwi   3, -1
+    beq     1f
+    cmpwi   3, 0
     bne     9f
+1:
     lwz     5, 0x08(1)
     cmplwi  5, 3
     bgt     9f

@@ -10,6 +10,7 @@ generators that place them.
 | `gc_sample.s` | GameCube pad -> Wii Remote + Nunchuk sample (KPAD sampling callback) |
 | `gc_convert.s` | the conversion itself, shared by `gc_sample.s` and `gc_synth.s` |
 | `gc_synth.s` | with no Wii Remote: make the sample from the pad and announce the controller (KPAD read) |
+| `cc_probe.s` | where `WPADProbe` stores the extension type: a Classic Controller reads as a Nunchuk, so the game never asks to attach one |
 | `gc_probe.s` | `WPADProbe` wrapper: a GameCube pad counts as a connected controller |
 | `pointer.s` | pointer from a stick, written into KPAD's output (KPAD read loop); used by both patches |
 | `gen_common.py` | site addresses, button tables and the code shared by the two builders |

@@ -28,6 +28,11 @@ def build(region, dol):
                      'KPAD read loop: pointer from the right stick')
     ops.append(h)
     cur += size
+    paddr, pword = g.type_store_site(region, dol)
+    h, size = g.hook(paddr, pword, cur, g.read('cc_probe.s'), {}, consts,
+                     'WPADProbe: a Classic Controller reads as a Nunchuk (no "attach Nunchuk" prompt)')
+    ops.append(h)
+    cur += size
     if cur > CC_END:
         raise SystemExit('cc code overflows its window: 0x%X > 0x%X' % (cur, CC_END))
     return Feature('cc', 'Classic Controller', region, ops)

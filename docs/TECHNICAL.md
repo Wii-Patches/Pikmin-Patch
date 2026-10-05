@@ -136,6 +136,16 @@ hooks so a pad alone is enough:
 
 With a remote connected neither hook changes anything.
 
+## The Nunchuk prompt
+
+The game asks `WPADProbe` for the extension type and prompts for a Nunchuk for
+anything but type 1, so a Classic Controller (type 2) would trigger it even though
+the sample stream already looks like a Nunchuk. The Classic Controller patch hooks
+the `stw r0,0(r30)` where `WPADProbe` stores the type (`0x8006B69C` in the USA
+`main.dol`) and turns 2 into 1. The GameCube wrapper does the same for a pad:
+whenever one answers on the channel's port and the probe says "no controller" or
+reports a remote without a Nunchuk, it reports a Nunchuk.
+
 ## The pointer hook
 
 A Nunchuk sample has no IR data, so KPAD reports no pointer and the game would
